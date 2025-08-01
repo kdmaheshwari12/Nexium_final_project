@@ -1,14 +1,15 @@
-// src/lib/connectDB.ts
-import mongoose from 'mongoose';
+// src/db_config/connectDB.ts
+import mongoose from "mongoose";
 
-const connectDB = async () => {
-  if (mongoose.connections[0].readyState) return;
-
-  await mongoose.connect(process.env.MONGODB_URI as string, {
-    dbName: 'recipe_generator',
-  });
-
-  console.log('✅ Connected to MongoDB');
-};
-
-export default connectDB;
+export async function connect() {
+  try {
+    if (mongoose.connection.readyState === 1) {
+      return; // Already connected
+    }
+    await mongoose.connect(process.env.MONGODB_URI as string);
+    console.log("✅ MongoDB connected");
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err);
+    throw err;
+  }
+}
